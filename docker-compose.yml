@@ -1,0 +1,28 @@
+services:
+  dagster-webserver:
+    build: .
+    command: dagster-webserver -h 0.0.0.0 -p 3000 -w workspace.yaml
+    ports:
+      - "${DAGSTER_PORT:-3000}:3000"
+    volumes:
+      - dagster-storage:/opt/dagster/dagster_home
+      - duckdb-data:/opt/dagster/data
+    environment:
+      DAGSTER_HOME: /opt/dagster/dagster_home
+      DUCKDB_PATH: /opt/dagster/data/regista.duckdb
+    depends_on:
+      - dagster-daemon
+
+  dagster-daemon:
+    build: .
+    command: dagster-daemon run -w workspace.yaml
+    volumes:
+      - dagster-storage:/opt/dagster/dagster_home
+      - duckdb-data:/opt/dagster/data
+    environment:
+      DAGSTER_HOME: /opt/dagster/dagster_home
+      DUCKDB_PATH: /opt/dagster/data/regista.duckdb
+
+volumes:
+  dagster-storage:
+  duckdb-data:

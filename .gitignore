@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+
+# DuckDB
+*.duckdb
+*.duckdb.wal
+
+# Dagster
+dagster_home/
+storage/
+.dagster/
+
+# dbt
+transform/target/
+transform/dbt_packages/
+transform/logs/
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cached HTML/JSON from scrapers
+.cache/
+
+# Claude Code local config
+.claude/
