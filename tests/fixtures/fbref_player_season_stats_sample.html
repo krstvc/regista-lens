@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head><title>2023-2024 Premier League Stats</title></head>
+<body>
+<table class="stats_table" id="stats_standard">
+<caption>Standard Stats</caption>
+<thead>
+<tr>
+<th data-stat="ranker">Rk</th>
+<th data-stat="player">Player</th>
+<th data-stat="nationality">Nation</th>
+<th data-stat="position">Pos</th>
+<th data-stat="team">Squad</th>
+<th data-stat="age">Age</th>
+<th data-stat="games">MP</th>
+<th data-stat="games_starts">Starts</th>
+<th data-stat="minutes">Min</th>
+<th data-stat="goals">Gls</th>
+<th data-stat="assists">Ast</th>
+<th data-stat="goals_pens">G-PK</th>
+<th data-stat="pens_made">PK</th>
+<th data-stat="pens_att">PKatt</th>
+<th data-stat="cards_yellow">CrdY</th>
+<th data-stat="cards_red">CrdR</th>
+<th data-stat="xg">xG</th>
+<th data-stat="npxg">npxG</th>
+<th data-stat="xg_assist">xAG</th>
+<th data-stat="goals_per90">Gls/90</th>
+<th data-stat="assists_per90">Ast/90</th>
+<th data-stat="goals_assists_per90">G+A/90</th>
+<th data-stat="goals_pens_per90">G-PK/90</th>
+<th data-stat="goals_assists_pens_per90">G+A-PK/90</th>
+<th data-stat="xg_per90">xG/90</th>
+<th data-stat="xg_assist_per90">xAG/90</th>
+<th data-stat="xg_xg_assist_per90">xG+xAG/90</th>
+<th data-stat="npxg_per90">npxG/90</th>
+<th data-stat="npxg_xg_assist_per90">npxG+xAG/90</th>
+</tr>
+</thead>
+<tbody>
+<!-- Normal player row -->
+<tr>
+<th data-stat="ranker">1</th>
+<td data-stat="player"><a href="/en/players/e342ad68/Mohamed-Salah">Mohamed Salah</a></td>
+<td data-stat="nationality">eg EGY</td>
+<td data-stat="position">FW,MF</td>
+<td data-stat="team"><a href="/en/squads/822bd0ba/Liverpool">Liverpool</a></td>
+<td data-stat="age">31-178</td>
+<td data-stat="games">32</td>
+<td data-stat="games_starts">30</td>
+<td data-stat="minutes">2,614</td>
+<td data-stat="goals">18</td>
+<td data-stat="assists">10</td>
+<td data-stat="goals_pens">14</td>
+<td data-stat="pens_made">4</td>
+<td data-stat="pens_att">4</td>
+<td data-stat="cards_yellow">1</td>
+<td data-stat="cards_red">0</td>
+<td data-stat="xg">16.2</td>
+<td data-stat="npxg">12.8</td>
+<td data-stat="xg_assist">8.5</td>
+<td data-stat="goals_per90">0.62</td>
+<td data-stat="assists_per90">0.34</td>
+<td data-stat="goals_assists_per90">0.97</td>
+<td data-stat="goals_pens_per90">0.48</td>
+<td data-stat="goals_assists_pens_per90">0.83</td>
+<td data-stat="xg_per90">0.56</td>
+<td data-stat="xg_assist_per90">0.29</td>
+<td data-stat="xg_xg_assist_per90">0.85</td>
+<td data-stat="npxg_per90">0.44</td>
+<td data-stat="npxg_xg_assist_per90">0.73</td>
+</tr>
+
+<!-- Player with accented name -->
+<tr>
+<th data-stat="ranker">2</th>
+<td data-stat="player"><a href="/en/players/b66315ae/Erling-Haaland">Erling Haaland</a></td>
+<td data-stat="nationality">no NOR</td>
+<td data-stat="position">FW</td>
+<td data-stat="team"><a href="/en/squads/b8fd03ef/Manchester-City">Manchester City</a></td>
+<td data-stat="age">23-051</td>
+<td data-stat="games">31</td>
+<td data-stat="games_starts">31</td>
+<td data-stat="minutes">2,712</td>
+<td data-stat="goals">27</td>
+<td data-stat="assists">5</td>
+<td data-stat="goals_pens">24</td>
+<td data-stat="pens_made">3</td>
+<td data-stat="pens_att">5</td>
+<td data-stat="cards_yellow">3</td>
+<td data-stat="cards_red">0</td>
+<td data-stat="xg">23.1</td>
+<td data-stat="npxg">19.6</td>
+<td data-stat="xg_assist">2.1</td>
+<td data-stat="goals_per90">0.90</td>
+<td data-stat="assists_per90">0.17</td>
+<td data-stat="goals_assists_per90">1.06</td>
+<td data-stat="goals_pens_per90">0.80</td>
+<td data-stat="goals_assists_pens_per90">0.96</td>
+<td data-stat="xg_per90">0.77</td>
+<td data-stat="xg_assist_per90">0.07</td>
+<td data-stat="xg_xg_assist_per90">0.84</td>
+<td data-stat="npxg_per90">0.65</td>
+<td data-stat="npxg_xg_assist_per90">0.72</td>
+</tr>
+
+<!-- Spacer/header row that should be skipped -->
+<tr class="thead">
+<th data-stat="ranker">Rk</th>
+<td data-stat="player">Player</td>
+<td data-stat="nationality">Nation</td>
+<td data-stat="position">Pos</td>
+<td data-stat="team">Squad</td>
+<td data-stat="age">Age</td>
+<td data-stat="games">MP</td>
+<td data-stat="games_starts">Starts</td>
+<td data-stat="minutes">Min</td>
+<td data-stat="goals">Gls</td>
+<td data-stat="assists">Ast</td>
+<td data-stat="goals_pens">G-PK</td>
+<td data-stat="pens_made">PK</td>
+<td data-stat="pens_att">PKatt</td>
+<td data-stat="cards_yellow">CrdY</td>
+<td data-stat="cards_red">CrdR</td>
+<td data-stat="xg">xG</td>
+<td data-stat="npxg">npxG</td>
+<td data-stat="xg_assist">xAG</td>
+<td data-stat="goals_per90">Gls/90</td>
+<td data-stat="assists_per90">Ast/90</td>
+<td data-stat="goals_assists_per90">G+A/90</td>
+<td data-stat="goals_pens_per90">G-PK/90</td>
+<td data-stat="goals_assists_pens_per90">G+A-PK/90</td>
+<td data-stat="xg_per90">xG/90</td>
+<td data-stat="xg_assist_per90">xAG/90</td>
+<td data-stat="xg_xg_assist_per90">xG+xAG/90</td>
+<td data-stat="npxg_per90">npxG/90</td>
+<td data-stat="npxg_xg_assist_per90">npxG+xAG/90</td>
+</tr>
+
+<!-- Player with accented name (Slavic) -->
+<tr>
+<th data-stat="ranker">3</th>
+<td data-stat="player"><a href="/en/players/abcdef01/Dušan-Vlahović">Dušan Vlahović</a></td>
+<td data-stat="nationality">rs SRB</td>
+<td data-stat="position">FW</td>
+<td data-stat="team"><a href="/en/squads/e0652b02/Arsenal">Arsenal</a></td>
+<td data-stat="age">24-015</td>
+<td data-stat="games">28</td>
+<td data-stat="games_starts">25</td>
+<td data-stat="minutes">2,100</td>
+<td data-stat="goals">12</td>
+<td data-stat="assists">3</td>
+<td data-stat="goals_pens">11</td>
+<td data-stat="pens_made">1</td>
+<td data-stat="pens_att">2</td>
+<td data-stat="cards_yellow">5</td>
+<td data-stat="cards_red">0</td>
+<td data-stat="xg">11.4</td>
+<td data-stat="npxg">9.8</td>
+<td data-stat="xg_assist">1.7</td>
+<td data-stat="goals_per90">0.51</td>
+<td data-stat="assists_per90">0.13</td>
+<td data-stat="goals_assists_per90">0.64</td>
+<td data-stat="goals_pens_per90">0.47</td>
+<td data-stat="goals_assists_pens_per90">0.60</td>
+<td data-stat="xg_per90">0.49</td>
+<td data-stat="xg_assist_per90">0.07</td>
+<td data-stat="xg_xg_assist_per90">0.56</td>
+<td data-stat="npxg_per90">0.42</td>
+<td data-stat="npxg_xg_assist_per90">0.49</td>
+</tr>
+
+<!-- Multi-team player: total row -->
+<tr>
+<th data-stat="ranker">4</th>
+<td data-stat="player"><a href="/en/players/fedcba99/João-Félix">João Félix</a></td>
+<td data-stat="nationality">pt POR</td>
+<td data-stat="position">FW,MF</td>
+<td data-stat="team">2 Clubs</td>
+<td data-stat="age">24-200</td>
+<td data-stat="games">20</td>
+<td data-stat="games_starts">14</td>
+<td data-stat="minutes">1,150</td>
+<td data-stat="goals">7</td>
+<td data-stat="assists">2</td>
+<td data-stat="goals_pens">7</td>
+<td data-stat="pens_made">0</td>
+<td data-stat="pens_att">0</td>
+<td data-stat="cards_yellow">3</td>
+<td data-stat="cards_red">0</td>
+<td data-stat="xg">5.8</td>
+<td data-stat="npxg">5.8</td>
+<td data-stat="xg_assist">2.1</td>
+<td data-stat="goals_per90">0.55</td>
+<td data-stat="assists_per90">0.16</td>
+<td data-stat="goals_assists_per90">0.70</td>
+<td data-stat="goals_pens_per90">0.55</td>
+<td data-stat="goals_assists_pens_per90">0.70</td>
+<td data-stat="xg_per90">0.45</td>
+<td data-stat="xg_assist_per90">0.16</td>
+<td data-stat="xg_xg_assist_per90">0.62</td>
+<td data-stat="npxg_per90">0.45</td>
+<td data-stat="npxg_xg_assist_per90">0.62</td>
+</tr>
+
+<!-- Multi-team player: individual team row 1 -->
+<tr>
+<th data-stat="ranker"></th>
+<td data-stat="player"><a href="/en/players/fedcba99/João-Félix">João Félix</a></td>
+<td data-stat="nationality">pt POR</td>
+<td data-stat="position">FW,MF</td>
+<td data-stat="team"><a href="/en/squads/206d90db/Barcelona">Barcelona</a></td>
+<td data-stat="age">24-200</td>
+<td data-stat="games">12</td>
+<td data-stat="games_starts">8</td>
+<td data-stat="minutes">700</td>
+<td data-stat="goals">5</td>
+<td data-stat="assists">1</td>
+<td data-stat="goals_pens">5</td>
+<td data-stat="pens_made">0</td>
+<td data-stat="pens_att">0</td>
+<td data-stat="cards_yellow">1</td>
+<td data-stat="cards_red">0</td>
+<td data-stat="xg">3.8</td>
+<td data-stat="npxg">3.8</td>
+<td data-stat="xg_assist">1.2</td>
+<td data-stat="goals_per90">0.64</td>
+<td data-stat="assists_per90">0.13</td>
+<td data-stat="goals_assists_per90">0.77</td>
+<td data-stat="goals_pens_per90">0.64</td>
+<td data-stat="goals_assists_pens_per90">0.77</td>
+<td data-stat="xg_per90">0.49</td>
+<td data-stat="xg_assist_per90">0.15</td>
+<td data-stat="xg_xg_assist_per90">0.64</td>
+<td data-stat="npxg_per90">0.49</td>
+<td data-stat="npxg_xg_assist_per90">0.64</td>
+</tr>
+
+<!-- Multi-team player: individual team row 2 -->
+<tr>
+<th data-stat="ranker"></th>
+<td data-stat="player"><a href="/en/players/fedcba99/João-Félix">João Félix</a></td>
+<td data-stat="nationality">pt POR</td>
+<td data-stat="position">FW,MF</td>
+<td data-stat="team"><a href="/en/squads/db3b9613/Atletico-Madrid">Atlético Madrid</a></td>
+<td data-stat="age">24-200</td>
+<td data-stat="games">8</td>
+<td data-stat="games_starts">6</td>
+<td data-stat="minutes">450</td>
+<td data-stat="goals">2</td>
+<td data-stat="assists">1</td>
+<td data-stat="goals_pens">2</td>
+<td data-stat="pens_made">0</td>
+<td data-stat="pens_att">0</td>
+<td data-stat="cards_yellow">2</td>
+<td data-stat="cards_red">0</td>
+<td data-stat="xg">2.0</td>
+<td data-stat="npxg">2.0</td>
+<td data-stat="xg_assist">0.9</td>
+<td data-stat="goals_per90">0.40</td>
+<td data-stat="assists_per90">0.20</td>
+<td data-stat="goals_assists_per90">0.60</td>
+<td data-stat="goals_pens_per90">0.40</td>
+<td data-stat="goals_assists_pens_per90">0.60</td>
+<td data-stat="xg_per90">0.40</td>
+<td data-stat="xg_assist_per90">0.18</td>
+<td data-stat="xg_xg_assist_per90">0.58</td>
+<td data-stat="npxg_per90">0.40</td>
+<td data-stat="npxg_xg_assist_per90">0.58</td>
+</tr>
+
+<!-- Player with empty stats (few appearances) -->
+<tr>
+<th data-stat="ranker">5</th>
+<td data-stat="player"><a href="/en/players/aabbccdd/Young-Player">Young Player</a></td>
+<td data-stat="nationality">en ENG</td>
+<td data-stat="position">MF</td>
+<td data-stat="team"><a href="/en/squads/822bd0ba/Liverpool">Liverpool</a></td>
+<td data-stat="age">18-045</td>
+<td data-stat="games">2</td>
+<td data-stat="games_starts">0</td>
+<td data-stat="minutes">15</td>
+<td data-stat="goals">0</td>
+<td data-stat="assists">0</td>
+<td data-stat="goals_pens">0</td>
+<td data-stat="pens_made">0</td>
+<td data-stat="pens_att">0</td>
+<td data-stat="cards_yellow">0</td>
+<td data-stat="cards_red">0</td>
+<td data-stat="xg"></td>
+<td data-stat="npxg"></td>
+<td data-stat="xg_assist"></td>
+<td data-stat="goals_per90"></td>
+<td data-stat="assists_per90"></td>
+<td data-stat="goals_assists_per90"></td>
+<td data-stat="goals_pens_per90"></td>
+<td data-stat="goals_assists_pens_per90"></td>
+<td data-stat="xg_per90"></td>
+<td data-stat="xg_assist_per90"></td>
+<td data-stat="xg_xg_assist_per90"></td>
+<td data-stat="npxg_per90"></td>
+<td data-stat="npxg_xg_assist_per90"></td>
+</tr>
+
+</tbody>
+</table>
+</body>
+</html>
