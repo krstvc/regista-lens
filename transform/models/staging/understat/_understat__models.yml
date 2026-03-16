@@ -1,0 +1,84 @@
+version: 2
+
+models:
+  - name: stg_understat__player_season_stats
+    description: >
+      Cleaned player season stats from Understat. One row per player per team per season.
+      Zero-minute players are excluded. Positions mapped from Understat codes to readable groups.
+    columns:
+      - name: player_season_team_id
+        description: "Surrogate key: hash of (understat_player_id, team_name, season)"
+        data_tests:
+          - unique
+          - not_null
+      - name: understat_player_id
+        description: Understat player ID
+        data_tests:
+          - not_null
+      - name: league
+        description: League name (e.g., "Premier League")
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Premier League", "La Liga", "Bundesliga", "Serie A", "Ligue 1"]
+      - name: season
+        description: "Season string (e.g., '2023-2024')"
+        data_tests:
+          - not_null
+      - name: player_name
+        description: Normalized player name (ASCII, lowercase)
+        data_tests:
+          - not_null
+      - name: team_name
+        description: Normalized team name (ASCII, lowercase)
+        data_tests:
+          - not_null
+      - name: xg
+        description: Expected goals (season total)
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "xg is not null"
+      - name: xg_assist
+        description: Expected assists (season total)
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "xg_assist is not null"
+      - name: xg_chain
+        description: xG Chain — total xG of possessions the player was involved in
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "xg_chain is not null"
+      - name: xg_buildup
+        description: xG Buildup — xG Chain minus shots and key passes
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "xg_buildup is not null"
+      - name: goals
+        description: Goals scored
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "goals is not null"
+      - name: minutes
+        description: Minutes played
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                inclusive: true
+              where: "minutes is not null"

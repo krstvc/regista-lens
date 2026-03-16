@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: raw_understat
+    description: Raw data ingested from Understat via JSON extraction from HTML pages
+    tables:
+      - name: raw_understat__player_season_stats
+        description: >
+          Player season stats from Understat league pages.
+          One row per player per team per season with xG, xA, and advanced expected metrics.
+        columns:
+          - name: player_id
+            description: Understat player ID
+          - name: _season
+            description: Season partition key (e.g., "2023-2024")
+          - name: _ingested_at
+            description: UTC timestamp of ingestion
+          - name: _source_url
+            description: Understat page URL the data was extracted from
