@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: stg_fbref__player_season_stats
+    description: >
+      Cleaned player season stats from FBref. One row per player per team per season.
+      Multi-team total rows are filtered out (per-team breakdowns kept).
+      Zero-minute players are excluded.
+    columns:
+      - name: player_season_team_id
+        description: "Surrogate key: hash of (fbref_player_id, fbref_team_id, season)"
+        data_tests:
+          - unique
+          - not_null
+      - name: fbref_player_id
+        description: FBref player ID extracted from URL
+        data_tests:
+          - not_null
+      - name: fbref_team_id
+        description: FBref team ID extracted from URL
+        data_tests:
+          - not_null
+      - name: league
+        description: League name (e.g., "Premier League")
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Premier League", "La Liga", "Bundesliga", "Serie A", "Ligue 1"]
+      - name: season
+        description: "Season string (e.g., '2023-2024')"
+        data_tests:
+          - not_null
+      - name: player_name
+        description: Normalized player name (ASCII, lowercase)
+        data_tests:
+          - not_null
+      - name: team_name
+        description: Normalized team name (ASCII, lowercase)
+        data_tests:
+          - not_null
+      - name: games
+        description: Matches played
+      - name: minutes
+        description: Minutes played
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                inclusive: true
+      - name: goals
+        description: Goals scored
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+      - name: assists
+        description: Assists
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+      - name: xg
+        description: Expected goals (season total)
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "xg is not null"

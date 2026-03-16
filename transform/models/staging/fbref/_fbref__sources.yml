@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: raw_fbref
+    description: Raw data ingested from FBref via Python scraping
+    tables:
+      - name: raw_fbref__player_season_stats
+        description: >
+          Player season stats from FBref Standard Stats tables.
+          One row per player per team per season (multi-team players have multiple rows).
+        columns:
+          - name: player_id
+            description: FBref player ID from URL
+          - name: _season
+            description: Season partition key (e.g., "2023-2024")
+          - name: _ingested_at
+            description: UTC timestamp of ingestion
+          - name: _source_url
+            description: FBref page URL(s) the data was scraped from
