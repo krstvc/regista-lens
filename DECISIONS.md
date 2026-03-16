@@ -112,3 +112,30 @@
 
 **Tradeoffs:**
 - `fct_player_season_stats` is not in the final CLAUDE.md schema (which targets match-level grain). It will need to be either replaced or kept as a complementary fact table when match-level ingestion is added.
+
+---
+
+## ADR-006: Entity resolution — deterministic fuzzy matching in pure SQL
+
+**Date:** 2026-03-16
+
+**Context:** With two data sources (FBref and Understat), we need to link player and team records across sources. Player names differ (transliteration, abbreviation, ordering), and neither source provides IDs for the other. We need a reproducible, auditable resolution approach.
+
+**Decision:** Deterministic fuzzy matching implemented entirely in dbt SQL, using DuckDB's built-in `jaro_winkler_similarity()` function. Team resolution via curated seed file; player resolution via blocking + weighted scoring.
+
+**Rationale:**
+- **Pure SQL, no Python in the transform layer.** Entity resolution runs as dbt models, maintaining the clean separation between ingestion (Python) and transformation (SQL). No additional runtime dependencies.
+- **DuckDB built-ins.** `jaro_winkler_similarity()` is native to DuckDB — no UDFs or extensions needed. Performant enough for our data volume (~2,500 players per league-season).
+- **Deterministic and reproducible.** Given the same inputs, the same matches are produced every time. No ML models, no randomness, no non-deterministic steps. A reviewer can trace exactly why any two records were linked by examining the confidence score breakdown (name: 0.6, team: 0.3, position: 0.1).
+- **Two-tier approach:** Teams are few (~100) and their name variants are well-known, so a curated seed file is appropriate. Players are numerous (~2,500 per season) with unpredictable name variations, so automated fuzzy matching with a manual override escape hatch is the right trade-off.
+- **Blocking for performance.** Comparing every FBref player to every Understat player would be O(n²). Blocking on (normalized last name, league, season) reduces the comparison space by ~100x while missing very few true matches (only cases where last names are transliterated differently, which the seed override handles).
+
+**Alternatives considered:**
+- **Python-based matching (e.g., recordlinkage, dedupe)** — more flexible and better for large-scale fuzzy matching, but adds Python to the transform layer, breaks the dbt-only transformation model, and is harder to audit. Overkill for our data volume.
+- **ML-based entity resolution** — could improve match quality, but introduces non-determinism, requires training data, and is much harder to debug when matches are wrong. Not justified for this project's scale.
+- **Exact-match only** — too many missed matches due to name variations (e.g., "Son Heung-min" vs "Heung-Min Son").
+
+**Tradeoffs:**
+- Blocking on last name will miss matches where the last name is transliterated differently across sources (e.g., different romanization of Arabic/Asian names). The manual override seed handles these cases.
+- The 0.75 composite score threshold may need tuning as real data reveals edge cases. Players scoring between 0.75 and 0.90 are flagged as `review_needed` for manual inspection.
+- The weighted scoring (name 60%, team 30%, position 10%) is a judgment call. Team overlap is weighted heavily because it's a strong signal — if two players share a name and team, they're almost certainly the same person.

@@ -30,7 +30,9 @@ models:
           - not_null
 
   - name: dim_team
-    description: Team dimension — distinct teams from FBref staging data
+    description: >
+      Team dimension — distinct teams from FBref staging data, enriched with
+      Understat team names via int_team_xref.
     columns:
       - name: team_key
         description: Surrogate key
@@ -38,7 +40,7 @@ models:
           - unique
           - not_null
       - name: canonical_team_id
-        description: Canonical team ID (FBref ID for now)
+        description: Canonical team ID (from team xref)
         data_tests:
           - unique
           - not_null
@@ -50,7 +52,7 @@ models:
   - name: dim_player
     description: >
       Player dimension — one row per player, attributes from most recent season.
-      Source IDs for Understat and Transfermarkt are NULL until those sources are integrated.
+      Understat ID populated via int_player_xref entity resolution.
     columns:
       - name: player_key
         description: Surrogate key
@@ -58,7 +60,7 @@ models:
           - unique
           - not_null
       - name: canonical_player_id
-        description: Canonical player ID (FBref ID for now)
+        description: Canonical player ID (from player xref)
         data_tests:
           - unique
           - not_null
@@ -70,7 +72,8 @@ models:
   - name: fct_player_season_stats
     description: >
       Fact table — player season stats at grain of one row per player per team per season.
-      Currently sourced from FBref only. Will be enriched with Understat xG and Transfermarkt valuations.
+      FBref provides core stats; Understat provides xG/xA enrichment via entity resolution.
+      _sources array indicates which sources contributed to each row.
     columns:
       - name: player_season_stats_key
         description: Surrogate key
@@ -110,7 +113,7 @@ models:
                 to: ref('dim_season')
                 field: season_key
       - name: goals
-        description: Goals scored in season
+        description: Goals scored in season (FBref)
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
@@ -118,10 +121,34 @@ models:
                 inclusive: true
               where: "goals is not null"
       - name: minutes
-        description: Minutes played in season
+        description: Minutes played in season (FBref)
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 1
                 inclusive: true
               where: "minutes is not null"
+      - name: understat_xg
+        description: Expected goals from Understat (NULL if player unmatched)
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "understat_xg is not null"
+      - name: xg_chain
+        description: xG Chain from Understat — total xG of possessions player was involved in
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "xg_chain is not null"
+      - name: xg_buildup
+        description: xG Buildup from Understat — xG Chain minus shots and key passes
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "xg_buildup is not null"

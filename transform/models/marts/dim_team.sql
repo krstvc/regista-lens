@@ -1,5 +1,9 @@
 with
 
+team_xref as (
+    select * from {{ ref('int_team_xref') }}
+),
+
 source_teams as (
     select distinct
         fbref_team_id,
@@ -24,14 +28,16 @@ ranked as (
 )
 
 select
-    {{ dbt_utils.generate_surrogate_key(['fbref_team_id']) }} as team_key,
-    fbref_team_id as canonical_team_id,
-    team_name_raw as full_name,
-    team_name as short_name,
-    league,
-    -- Source ID columns (NULL placeholders for future sources)
-    fbref_team_id,
-    cast(null as varchar) as understat_team_id,
+    {{ dbt_utils.generate_surrogate_key(['coalesce(tx.canonical_team_id, r.fbref_team_id)']) }}
+        as team_key,
+    coalesce(tx.canonical_team_id, r.fbref_team_id) as canonical_team_id,
+    r.team_name_raw as full_name,
+    r.team_name as short_name,
+    r.league,
+    -- Source ID columns
+    r.fbref_team_id,
+    tx.understat_team_name as understat_team_id,
     cast(null as varchar) as transfermarkt_team_id
-from ranked
-where rn = 1
+from ranked r
+left join team_xref tx on r.fbref_team_id = tx.fbref_team_id
+where r.rn = 1
