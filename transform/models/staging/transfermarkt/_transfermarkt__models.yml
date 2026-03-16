@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: stg_transfermarkt__player_valuations
+    description: >
+      Cleaned player market valuations from Transfermarkt. One row per player
+      per team per season. Names normalized for entity resolution matching.
+    columns:
+      - name: player_valuation_id
+        description: "Surrogate key: hash of (transfermarkt_player_id, transfermarkt_team_id, season)"
+        data_tests:
+          - unique
+          - not_null
+      - name: transfermarkt_player_id
+        description: Transfermarkt player ID
+        data_tests:
+          - not_null
+      - name: transfermarkt_team_id
+        description: Transfermarkt team ID
+        data_tests:
+          - not_null
+      - name: league
+        description: League name (e.g., "Premier League")
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Premier League", "La Liga", "Bundesliga", "Serie A", "Ligue 1"]
+      - name: season
+        description: "Season string (e.g., '2023-2024')"
+        data_tests:
+          - not_null
+      - name: player_name
+        description: Normalized player name (ASCII, lowercase)
+        data_tests:
+          - not_null
+      - name: team_name
+        description: Normalized team name (ASCII, lowercase)
+        data_tests:
+          - not_null
+      - name: market_value_eur
+        description: Market value in EUR
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "market_value_eur is not null"

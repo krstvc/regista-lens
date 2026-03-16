@@ -3,9 +3,9 @@ version: 2
 models:
   - name: int_team_xref
     description: >
-      Team cross-reference linking FBref teams to Understat teams via a curated
-      seed file of name mappings. Teams with identical normalized names match
-      directly; divergent names are resolved via the seed.
+      Team cross-reference linking FBref, Understat, and Transfermarkt teams
+      via a curated seed file of name mappings. Teams with identical normalized
+      names match directly; divergent names are resolved via the seed.
     columns:
       - name: canonical_team_id
         description: Surrogate key for the canonical team identity
@@ -17,6 +17,10 @@ models:
         data_tests:
           - unique
           - not_null
+      - name: transfermarkt_team_id
+        description: Transfermarkt team ID (NULL if no match)
+      - name: transfermarkt_team_name
+        description: Normalized Transfermarkt team name (NULL if no match)
       - name: canonical_team_name
         description: Canonical normalized team name used for matching
         data_tests:
@@ -28,10 +32,10 @@ models:
 
   - name: int_player_xref
     description: >
-      Player cross-reference linking FBref players to Understat players via
-      deterministic fuzzy matching. Blocking: normalized last name + league + season.
-      Scoring: jaro_winkler name similarity (0.6) + team overlap (0.3) + position (0.1).
-      Threshold: 0.75 minimum, 0.90 for auto-match.
+      Player cross-reference linking FBref players to Understat and Transfermarkt
+      players via deterministic fuzzy matching. Blocking: normalized last name +
+      league + season. Scoring: jaro_winkler name similarity (0.6) + team overlap
+      (0.3) + position (0.1). Threshold: 0.75 minimum, 0.90 for auto-match.
     columns:
       - name: canonical_player_id
         description: >
@@ -43,17 +47,21 @@ models:
         description: FBref player ID (always populated)
         data_tests:
           - not_null
+      - name: understat_player_id
+        description: Understat player ID (NULL if no Understat match found)
+      - name: transfermarkt_player_id
+        description: Transfermarkt player ID (NULL if no Transfermarkt match found)
       - name: match_status
         description: >
-          Match classification: auto_matched (>=0.90), review_needed (0.75-0.90),
-          manual_override (from seed), or unmatched (no Understat match found)
+          Understat match classification: auto_matched (>=0.90), review_needed
+          (0.75-0.90), manual_override (from seed), or unmatched (no Understat match)
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ["auto_matched", "review_needed", "manual_override", "unmatched"]
       - name: confidence
-        description: Composite match score (NULL for unmatched players)
+        description: Understat composite match score (NULL for unmatched players)
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
@@ -61,3 +69,12 @@ models:
                 max_value: 1.0
                 inclusive: true
               where: "confidence is not null"
+      - name: transfermarkt_confidence
+        description: Transfermarkt composite match score (NULL if no match)
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0.75
+                max_value: 1.0
+                inclusive: true
+              where: "transfermarkt_confidence is not null"

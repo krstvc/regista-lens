@@ -15,6 +15,14 @@ understat_teams as (
     from {{ ref('stg_understat__player_season_stats') }}
 ),
 
+transfermarkt_teams as (
+    select distinct
+        transfermarkt_team_id,
+        team_name as transfermarkt_team_name,
+        league
+    from {{ ref('stg_transfermarkt__player_valuations') }}
+),
+
 seed_mappings as (
     select * from {{ ref('team_name_mappings') }}
 ),
@@ -44,6 +52,20 @@ understat_mapped as (
         on sm.source = 'understat'
         and sm.source_team_name = ut.understat_team_name
         and sm.league = ut.league
+),
+
+-- Resolve Transfermarkt team names: use seed override if present, else use normalized name directly
+transfermarkt_mapped as (
+    select
+        tt.transfermarkt_team_id,
+        tt.transfermarkt_team_name,
+        tt.league,
+        coalesce(sm.canonical_team_name, tt.transfermarkt_team_name) as canonical_team_name
+    from transfermarkt_teams tt
+    left join seed_mappings sm
+        on sm.source = 'transfermarkt'
+        and sm.source_team_name = tt.transfermarkt_team_name
+        and sm.league = tt.league
 )
 
 -- Join on canonical name to produce the cross-reference
@@ -53,9 +75,14 @@ select
     fm.fbref_team_id,
     fm.fbref_team_name,
     um.understat_team_name,
+    tm.transfermarkt_team_id,
+    tm.transfermarkt_team_name,
     fm.canonical_team_name,
     fm.league
 from fbref_mapped fm
 left join understat_mapped um
     on fm.canonical_team_name = um.canonical_team_name
     and fm.league = um.league
+left join transfermarkt_mapped tm
+    on fm.canonical_team_name = tm.canonical_team_name
+    and fm.league = tm.league

@@ -1,0 +1,28 @@
+version: 2
+
+sources:
+  - name: raw_transfermarkt
+    description: Raw data ingested from Transfermarkt market values pages
+    tables:
+      - name: raw_transfermarkt__player_valuations
+        description: >
+          Player market valuations from Transfermarkt league pages.
+          One row per player per league per season with market value, position,
+          DOB, nationality, and team membership.
+        columns:
+          - name: player_id
+            description: Transfermarkt player ID
+          - name: player_name
+            description: Player name as displayed on Transfermarkt
+          - name: team_id
+            description: Transfermarkt team ID
+          - name: team_name
+            description: Team name as displayed on Transfermarkt
+          - name: market_value_eur
+            description: Market value in EUR (parsed from display string)
+          - name: _season
+            description: Season partition key (e.g., "2023-2024")
+          - name: _ingested_at
+            description: UTC timestamp of ingestion
+          - name: _source_url
+            description: Transfermarkt page URL the data was extracted from
