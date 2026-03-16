@@ -25,12 +25,13 @@ latest as (
     select * from source_players where rn = 1
 ),
 
--- Get the most recent xref entry per player (for understat_id)
+-- Get the most recent xref entry per player (for understat_id + transfermarkt_id)
 xref_latest as (
     select
         canonical_player_id,
         fbref_player_id,
         understat_player_id,
+        transfermarkt_player_id,
         row_number() over (
             partition by fbref_player_id
             order by season desc
@@ -53,6 +54,6 @@ select
     -- Source ID columns
     l.fbref_player_id,
     x.understat_player_id as understat_id,
-    cast(null as varchar) as transfermarkt_id
+    x.transfermarkt_player_id as transfermarkt_id
 from latest l
 inner join xref_deduped x on l.fbref_player_id = x.fbref_player_id

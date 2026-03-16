@@ -139,3 +139,26 @@
 - Blocking on last name will miss matches where the last name is transliterated differently across sources (e.g., different romanization of Arabic/Asian names). The manual override seed handles these cases.
 - The 0.75 composite score threshold may need tuning as real data reveals edge cases. Players scoring between 0.75 and 0.90 are flagged as `review_needed` for manual inspection.
 - The weighted scoring (name 60%, team 30%, position 10%) is a judgment call. Team overlap is weighted heavily because it's a strong signal — if two players share a name and team, they're almost certainly the same person.
+
+---
+
+## ADR-007: Transfermarkt market values page as primary endpoint
+
+**Date:** 2026-03-16
+
+**Context:** Transfermarkt exposes player data across several page types: squad pages (per team), player profiles (per player), and market values pages (per league, paginated). We need to choose which endpoint to scrape for Phase 1.
+
+**Decision:** Use the league market values page (`/marktwerte/wettbewerb/{comp_id}`) as the single Transfermarkt ingestion endpoint.
+
+**Rationale:**
+- **Data density.** A single paginated endpoint yields player ID, team ID, position, DOB, nationality, and market value — all the fields needed for both the valuation fact table and entity resolution enrichment. No need to visit individual player or squad pages.
+- **Minimal request count.** Each league has ~20-25 pages of 25 players. 5 leagues × ~22 pages = ~110 requests per season. At 5s rate limiting, that's ~9 minutes per season — acceptable for a batch pipeline.
+- **Pagination is deterministic.** Total page count is available from the pagination element on page 1, so we know exactly how many requests to make upfront.
+
+**Alternatives considered:**
+- **Squad pages** — one page per team (~100 teams × 3 seasons = 300 requests). More granular team-level data, but doesn't include market values directly and requires visiting separate valuation sub-pages.
+- **Player profiles** — most detailed data (contract dates, agent info, transfer history), but would require ~2,500+ requests per league-season. Far too many requests for Phase 1.
+
+**Tradeoffs:**
+- Market values pages don't include contract end dates or transfer history. These would require player profile scraping in a future phase.
+- The market value is a point-in-time snapshot. Transfermarkt updates values periodically, but we only capture whatever value is current at ingestion time. Phase 1 treats this as a season snapshot, which is sufficient for the valuation fact table's grain.

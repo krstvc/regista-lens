@@ -37,7 +37,7 @@ select
     -- Source ID columns
     r.fbref_team_id,
     tx.understat_team_name as understat_team_id,
-    cast(null as varchar) as transfermarkt_team_id
+    tx.transfermarkt_team_id
 from ranked r
 left join team_xref tx on r.fbref_team_id = tx.fbref_team_id
 where r.rn = 1

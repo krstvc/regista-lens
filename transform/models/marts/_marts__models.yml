@@ -32,7 +32,7 @@ models:
   - name: dim_team
     description: >
       Team dimension — distinct teams from FBref staging data, enriched with
-      Understat team names via int_team_xref.
+      Understat and Transfermarkt team IDs via int_team_xref.
     columns:
       - name: team_key
         description: Surrogate key
@@ -52,7 +52,7 @@ models:
   - name: dim_player
     description: >
       Player dimension — one row per player, attributes from most recent season.
-      Understat ID populated via int_player_xref entity resolution.
+      Understat and Transfermarkt IDs populated via int_player_xref entity resolution.
     columns:
       - name: player_key
         description: Surrogate key
@@ -152,3 +152,54 @@ models:
                 min_value: 0
                 inclusive: true
               where: "xg_buildup is not null"
+
+  - name: fct_player_season_valuations
+    description: >
+      Fact table — player season valuations at grain of one row per player per team
+      per season. Market values from Transfermarkt, joined via entity resolution.
+    columns:
+      - name: valuation_key
+        description: Surrogate key
+        data_tests:
+          - unique
+          - not_null
+      - name: player_key
+        description: FK to dim_player
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_player')
+                field: player_key
+      - name: team_key
+        description: FK to dim_team
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_team')
+                field: team_key
+      - name: season_key
+        description: FK to dim_season
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_season')
+                field: season_key
+      - name: competition_key
+        description: FK to dim_competition
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_competition')
+                field: competition_key
+      - name: market_value_eur
+        description: Market value in EUR from Transfermarkt
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "market_value_eur is not null"
