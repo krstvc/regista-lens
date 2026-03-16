@@ -8,6 +8,7 @@ from dagster import ConfigurableResource
 
 from ingestion.common.http import RateLimitedClient
 from ingestion.fbref.client import FbrefClient
+from ingestion.transfermarkt.client import TransfermarktClient
 from ingestion.understat.client import UnderstatClient
 
 
@@ -37,3 +38,17 @@ class UnderstatClientResource(ConfigurableResource):
             cache_dir=Path(self.cache_dir),
         )
         return UnderstatClient(http_client)
+
+
+class TransfermarktClientResource(ConfigurableResource):
+    """Dagster resource wrapping the Transfermarkt HTTP client with rate limiting."""
+
+    request_delay: float = 5.0
+    cache_dir: str = ".cache/transfermarkt"
+
+    def get_client(self) -> TransfermarktClient:
+        http_client = RateLimitedClient(
+            delay_seconds=self.request_delay,
+            cache_dir=Path(self.cache_dir),
+        )
+        return TransfermarktClient(http_client)
