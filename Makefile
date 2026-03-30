@@ -1,4 +1,4 @@
-.PHONY: up down test lint dbt-run ingest-season format
+.PHONY: up down test lint dbt-run ingest-season backfill format
 
 up:
 	docker compose up -d
@@ -22,4 +22,9 @@ dbt-run:
 
 ingest-season:
 	@test -n "$(SEASON)" || (echo "Usage: make ingest-season SEASON=2023-2024" && exit 1)
-	@echo "Not yet implemented — will trigger Dagster asset materialization for season $(SEASON)."
+	uv run python scripts/ingest_season.py $(SEASON)
+
+backfill:
+	uv run python scripts/ingest_season.py 2023-2024
+	uv run python scripts/ingest_season.py 2024-2025
+	uv run python scripts/ingest_season.py 2025-2026

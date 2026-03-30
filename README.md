@@ -37,7 +37,8 @@ make dbt-run              # Run dbt models (requires DUCKDB_PATH)
 | `make lint` | Lint and format check |
 | `make format` | Auto-fix lint issues and format |
 | `make dbt-run` | Run dbt models |
-| `make ingest-season SEASON=2023-2024` | Trigger ingestion for a season (not yet implemented) |
+| `make ingest-season SEASON=2023-2024` | Ingest raw data for a single season |
+| `make backfill` | Ingest all 3 seasons sequentially |
 
 ## Architecture
 
