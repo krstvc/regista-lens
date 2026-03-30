@@ -21,6 +21,7 @@ from orchestration.checks import (
     check_raw_understat_row_count,
 )
 from orchestration.resources import (
+    DuckDBPathResource,
     FbrefClientResource,
     TransfermarktClientResource,
     UnderstatClientResource,
@@ -50,7 +51,9 @@ defs = Definitions(
         "transfermarkt_client": TransfermarktClientResource(
             request_delay=float(os.getenv("TRANSFERMARKT_REQUEST_DELAY", "5")),
         ),
-        "duckdb_path": os.getenv("DUCKDB_PATH", "regista.duckdb"),
+        "duckdb_path": DuckDBPathResource(
+            path=os.getenv("DUCKDB_PATH", "regista.duckdb"),
+        ),
         "dbt": DbtCliResource(project_dir=DBT_PROJECT_DIR),
     },
 )

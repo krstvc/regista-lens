@@ -12,6 +12,12 @@ from ingestion.transfermarkt.client import TransfermarktClient
 from ingestion.understat.client import UnderstatClient
 
 
+class DuckDBPathResource(ConfigurableResource):
+    """Dagster resource providing the path to the DuckDB database file."""
+
+    path: str = "regista.duckdb"
+
+
 class FbrefClientResource(ConfigurableResource):
     """Dagster resource wrapping the FBref HTTP client with rate limiting."""
 

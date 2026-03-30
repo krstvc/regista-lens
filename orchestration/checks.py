@@ -1,7 +1,5 @@
 """Dagster asset checks for data quality validation."""
 
-from __future__ import annotations
-
 import duckdb
 from dagster import AssetCheckResult, AssetCheckSeverity, asset_check
 
@@ -10,6 +8,7 @@ from orchestration.assets.raw import (
     raw_transfermarkt__player_valuations,
     raw_understat__player_season_stats,
 )
+from orchestration.resources import DuckDBPathResource
 
 
 def _row_count(db_path: str, table: str) -> int:
@@ -25,9 +24,9 @@ def _row_count(db_path: str, table: str) -> int:
 
 
 @asset_check(asset=raw_fbref__player_season_stats, blocking=True)
-def check_raw_fbref_row_count(duckdb_path: str) -> AssetCheckResult:
+def check_raw_fbref_row_count(duckdb_path: DuckDBPathResource) -> AssetCheckResult:
     """Raw FBref table must have rows after materialization."""
-    count = _row_count(duckdb_path, "raw_fbref__player_season_stats")
+    count = _row_count(duckdb_path.path, "raw_fbref__player_season_stats")
     return AssetCheckResult(
         passed=count > 0,
         metadata={"row_count": count},
@@ -36,9 +35,9 @@ def check_raw_fbref_row_count(duckdb_path: str) -> AssetCheckResult:
 
 
 @asset_check(asset=raw_understat__player_season_stats, blocking=True)
-def check_raw_understat_row_count(duckdb_path: str) -> AssetCheckResult:
+def check_raw_understat_row_count(duckdb_path: DuckDBPathResource) -> AssetCheckResult:
     """Raw Understat table must have rows after materialization."""
-    count = _row_count(duckdb_path, "raw_understat__player_season_stats")
+    count = _row_count(duckdb_path.path, "raw_understat__player_season_stats")
     return AssetCheckResult(
         passed=count > 0,
         metadata={"row_count": count},
@@ -47,9 +46,9 @@ def check_raw_understat_row_count(duckdb_path: str) -> AssetCheckResult:
 
 
 @asset_check(asset=raw_transfermarkt__player_valuations, blocking=True)
-def check_raw_transfermarkt_row_count(duckdb_path: str) -> AssetCheckResult:
+def check_raw_transfermarkt_row_count(duckdb_path: DuckDBPathResource) -> AssetCheckResult:
     """Raw Transfermarkt table must have rows after materialization."""
-    count = _row_count(duckdb_path, "raw_transfermarkt__player_valuations")
+    count = _row_count(duckdb_path.path, "raw_transfermarkt__player_valuations")
     return AssetCheckResult(
         passed=count > 0,
         metadata={"row_count": count},
@@ -61,9 +60,9 @@ def check_raw_transfermarkt_row_count(duckdb_path: str) -> AssetCheckResult:
     asset=raw_fbref__player_season_stats,
     description="Entity resolution match rate FBref to Understat >= 50%",
 )
-def check_player_xref_match_rate(duckdb_path: str) -> AssetCheckResult:
+def check_player_xref_match_rate(duckdb_path: DuckDBPathResource) -> AssetCheckResult:
     """Verify that at least 50% of FBref players have an Understat match."""
-    con = duckdb.connect(duckdb_path, read_only=True)
+    con = duckdb.connect(duckdb_path.path, read_only=True)
     try:
         result = con.execute("""
             select
@@ -99,9 +98,9 @@ def check_player_xref_match_rate(duckdb_path: str) -> AssetCheckResult:
 
 
 @asset_check(asset=raw_fbref__player_season_stats, description="Mart fact tables have rows")
-def check_mart_row_counts(duckdb_path: str) -> AssetCheckResult:
+def check_mart_row_counts(duckdb_path: DuckDBPathResource) -> AssetCheckResult:
     """Verify mart fact tables are populated (joins not broken)."""
-    con = duckdb.connect(duckdb_path, read_only=True)
+    con = duckdb.connect(duckdb_path.path, read_only=True)
     try:
         counts = {}
         for table in ("fct_player_season_stats", "fct_player_season_valuations"):

@@ -8,6 +8,7 @@ from ingestion.transfermarkt.client import LEAGUES as TRANSFERMARKT_LEAGUES
 from ingestion.understat.client import LEAGUES as UNDERSTAT_LEAGUES
 from orchestration.partitions import SEASON_PARTITIONS
 from orchestration.resources import (
+    DuckDBPathResource,
     FbrefClientResource,
     TransfermarktClientResource,
     UnderstatClientResource,
@@ -26,7 +27,7 @@ from orchestration.resources import (
 def raw_fbref__player_season_stats(
     context: AssetExecutionContext,
     fbref_client: FbrefClientResource,
-    duckdb_path: str,
+    duckdb_path: DuckDBPathResource,
 ) -> MaterializeResult:
     """Fetch player season stats from FBref for all 5 leagues in the given season."""
     season = context.partition_key
@@ -47,7 +48,7 @@ def raw_fbref__player_season_stats(
         client.close()
 
     row_count = write_raw_table(
-        db_path=duckdb_path,
+        db_path=duckdb_path.path,
         table_name="raw_fbref__player_season_stats",
         records=all_records,
         season=season,
@@ -75,7 +76,7 @@ def raw_fbref__player_season_stats(
 def raw_understat__player_season_stats(
     context: AssetExecutionContext,
     understat_client: UnderstatClientResource,
-    duckdb_path: str,
+    duckdb_path: DuckDBPathResource,
 ) -> MaterializeResult:
     """Fetch player season stats from Understat for all 5 leagues in the given season."""
     season = context.partition_key
@@ -96,7 +97,7 @@ def raw_understat__player_season_stats(
         client.close()
 
     row_count = write_raw_table(
-        db_path=duckdb_path,
+        db_path=duckdb_path.path,
         table_name="raw_understat__player_season_stats",
         records=all_records,
         season=season,
@@ -124,7 +125,7 @@ def raw_understat__player_season_stats(
 def raw_transfermarkt__player_valuations(
     context: AssetExecutionContext,
     transfermarkt_client: TransfermarktClientResource,
-    duckdb_path: str,
+    duckdb_path: DuckDBPathResource,
 ) -> MaterializeResult:
     """Fetch player valuations from Transfermarkt for all 5 leagues in the given season."""
     season = context.partition_key
@@ -145,7 +146,7 @@ def raw_transfermarkt__player_valuations(
         client.close()
 
     row_count = write_raw_table(
-        db_path=duckdb_path,
+        db_path=duckdb_path.path,
         table_name="raw_transfermarkt__player_valuations",
         records=all_records,
         season=season,
