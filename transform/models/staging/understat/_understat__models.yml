@@ -34,6 +34,14 @@ models:
         description: Normalized team name (ASCII, lowercase)
         data_tests:
           - not_null
+      - name: shots
+        description: Total shots taken
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+              where: "shots is not null"
       - name: xg
         description: Expected goals (season total)
         data_tests:
@@ -42,6 +50,8 @@ models:
                 min_value: 0
                 inclusive: true
               where: "xg is not null"
+          - xg_per_shot_range:
+              shots_column: shots
       - name: xg_assist
         description: Expected assists (season total)
         data_tests:

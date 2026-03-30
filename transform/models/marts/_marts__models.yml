@@ -136,6 +136,8 @@ models:
                 min_value: 0
                 inclusive: true
               where: "understat_xg is not null"
+          - xg_per_shot_range:
+              shots_column: understat_shots
       - name: xg_chain
         description: xG Chain from Understat — total xG of possessions player was involved in
         data_tests:
