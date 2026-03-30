@@ -11,9 +11,7 @@ from ingestion.understat.schemas import UnderstatPlayerSeasonStatsRaw
 
 logger = structlog.get_logger()
 
-_PLAYERS_DATA_PATTERN = re.compile(
-    r"var\s+playersData\s*=\s*JSON\.parse\('(.+?)'\)"
-)
+_PLAYERS_DATA_PATTERN = re.compile(r"var\s+playersData\s*=\s*JSON\.parse\('(.+?)'\)")
 
 _HEX_ESCAPE_PATTERN = re.compile(r"\\x([0-9a-fA-F]{2})")
 
@@ -56,9 +54,7 @@ _FLOAT_FIELDS = {"xg", "xg_assist", "npxg", "xg_chain", "xg_buildup"}
 
 def _decode_hex_escapes(encoded: str) -> str:
     """Decode ``\\xHH`` escape sequences to their character equivalents."""
-    return _HEX_ESCAPE_PATTERN.sub(
-        lambda m: chr(int(m.group(1), 16)), encoded
-    )
+    return _HEX_ESCAPE_PATTERN.sub(lambda m: chr(int(m.group(1), 16)), encoded)
 
 
 def _coerce_value(value: str | None, field_name: str) -> int | float | str | None:

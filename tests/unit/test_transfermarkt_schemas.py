@@ -71,7 +71,5 @@ class TestTransfermarktPlayerValuationRaw:
         assert record.market_value_eur is None
 
     def test_zero_market_value(self) -> None:
-        record = TransfermarktPlayerValuationRaw(
-            **_minimal_record(market_value_eur=0)
-        )
+        record = TransfermarktPlayerValuationRaw(**_minimal_record(market_value_eur=0))
         assert record.market_value_eur == 0

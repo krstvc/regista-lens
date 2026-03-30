@@ -17,9 +17,7 @@ logger = structlog.get_logger()
 
 _PLAYER_ID_PATTERN = re.compile(r"/spieler/(\d+)")
 _TEAM_ID_PATTERN = re.compile(r"/verein/(\d+)")
-_VALUE_PATTERN = re.compile(
-    r"€(\d+(?:\.\d+)?)\s*(bn|m|k|Th\.)", re.IGNORECASE
-)
+_VALUE_PATTERN = re.compile(r"€(\d+(?:\.\d+)?)\s*(bn|m|k|Th\.)", re.IGNORECASE)
 
 _VALUE_MULTIPLIERS: dict[str, int] = {
     "bn": 1_000_000_000,

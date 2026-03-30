@@ -127,9 +127,7 @@ class TestParseMarketValuesPage:
         assert saka.nationality == "England"
 
     def test_empty_html_returns_empty_list(self) -> None:
-        result = parse_market_values_page(
-            "<html><body></body></html>", "Test", "2023-2024"
-        )
+        result = parse_market_values_page("<html><body></body></html>", "Test", "2023-2024")
         assert result == []
 
     def test_no_tbody_returns_empty_list(self) -> None:
