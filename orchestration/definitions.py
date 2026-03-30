@@ -13,6 +13,13 @@ from orchestration.assets.raw import (
     raw_transfermarkt__player_valuations,
     raw_understat__player_season_stats,
 )
+from orchestration.checks import (
+    check_mart_row_counts,
+    check_player_xref_match_rate,
+    check_raw_fbref_row_count,
+    check_raw_transfermarkt_row_count,
+    check_raw_understat_row_count,
+)
 from orchestration.resources import (
     FbrefClientResource,
     TransfermarktClientResource,
@@ -25,6 +32,13 @@ defs = Definitions(
         raw_understat__player_season_stats,
         raw_transfermarkt__player_valuations,
         regista_dbt_assets,
+    ],
+    asset_checks=[
+        check_raw_fbref_row_count,
+        check_raw_understat_row_count,
+        check_raw_transfermarkt_row_count,
+        check_player_xref_match_rate,
+        check_mart_row_counts,
     ],
     resources={
         "fbref_client": FbrefClientResource(
