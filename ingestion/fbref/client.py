@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ingestion.common.http import RateLimitedClient
+from ingestion.common.http import BrowserClient
 from ingestion.fbref.parsers import parse_player_season_stats
 from ingestion.fbref.schemas import FbrefPlayerSeasonStatsRaw
 
@@ -26,7 +26,7 @@ def _build_url(comp_id: int, comp_slug: str, season: str) -> str:
 class FbrefClient:
     """High-level client for fetching and parsing FBref data."""
 
-    def __init__(self, http_client: RateLimitedClient) -> None:
+    def __init__(self, http_client: BrowserClient) -> None:
         self._http = http_client
 
     def fetch_player_season_stats(
@@ -41,7 +41,7 @@ class FbrefClient:
         """
         comp_id, comp_slug = COMP_IDS[league]
         url = _build_url(comp_id, comp_slug, season)
-        html = self._http.get(url)
+        html = self._http.get(url, wait_selector="stats_standard")
         records = parse_player_season_stats(html, league, season)
         return records, url
 
