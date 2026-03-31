@@ -6,7 +6,7 @@ from pathlib import Path
 
 from dagster import ConfigurableResource
 
-from ingestion.common.http import RateLimitedClient
+from ingestion.common.http import BrowserClient, RateLimitedClient
 from ingestion.fbref.client import FbrefClient
 from ingestion.transfermarkt.client import TransfermarktClient
 from ingestion.understat.client import UnderstatClient
@@ -25,7 +25,7 @@ class FbrefClientResource(ConfigurableResource):
     cache_dir: str = ".cache/fbref"
 
     def get_client(self) -> FbrefClient:
-        http_client = RateLimitedClient(
+        http_client = BrowserClient(
             delay_seconds=self.request_delay,
             cache_dir=Path(self.cache_dir),
         )
