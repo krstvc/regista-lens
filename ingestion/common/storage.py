@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 import duckdb
+import pandas as pd
 import structlog
 
 logger = structlog.get_logger()
@@ -39,9 +40,9 @@ def write_raw_table(
     try:
         con.execute("BEGIN TRANSACTION")
 
-        # Register records as a named relation so DuckDB SQL can reference it
-        records_rel = con.sql("SELECT * FROM ?", params=[records])
-        con.register("_records_view", records_rel)
+        # Register records as a named view so DuckDB SQL can reference it
+        df = pd.DataFrame(records)
+        con.register("_records_view", df)
 
         table_exists = (
             con.execute(
