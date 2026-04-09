@@ -3,6 +3,7 @@
 import duckdb
 from dagster import AssetCheckResult, AssetCheckSeverity, asset_check
 
+from ingestion.common.storage import _derive_schema
 from orchestration.assets.raw import (
     raw_fbref__player_season_stats,
     raw_transfermarkt__player_valuations,
@@ -13,9 +14,11 @@ from orchestration.resources import DuckDBPathResource
 
 def _row_count(db_path: str, table: str) -> int:
     """Return row count for a table, or 0 if it does not exist."""
+    schema = _derive_schema(table)
+    qualified = f"{schema}.{table}"
     con = duckdb.connect(db_path, read_only=True)
     try:
-        result = con.execute(f"select count(*) from {table}").fetchone()  # noqa: S608
+        result = con.execute(f"select count(*) from {qualified}").fetchone()  # noqa: S608
         return result[0] if result else 0
     except duckdb.CatalogException:
         return 0
