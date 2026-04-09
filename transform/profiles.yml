@@ -3,4 +3,4 @@ regista_lens:
   outputs:
     dev:
       type: duckdb
-      path: "{{ env_var('DUCKDB_PATH', 'regista.duckdb') }}"
+      path: "{{ env_var('DUCKDB_PATH', '../regista.duckdb') }}"
