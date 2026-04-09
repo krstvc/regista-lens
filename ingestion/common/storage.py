@@ -69,9 +69,7 @@ def write_raw_table(
         )
 
         if not table_exists:
-            con.execute(
-                f"CREATE TABLE {qualified_name} AS SELECT * FROM _records_view WHERE 1=0"
-            )
+            con.execute(f"CREATE TABLE {qualified_name} AS SELECT * FROM _records_view WHERE 1=0")
             logger.info("created_table", table=qualified_name)
 
         # Idempotent: delete existing partition data

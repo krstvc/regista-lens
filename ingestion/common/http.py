@@ -10,6 +10,7 @@ Two clients:
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import hashlib
 import time
 from pathlib import Path
@@ -25,6 +26,7 @@ _CACHE_DIR = Path(".cache")
 # ---------------------------------------------------------------------------
 # Lightweight httpx client (Understat, other non-Cloudflare sources)
 # ---------------------------------------------------------------------------
+
 
 class RateLimitedClient:
     """Sync HTTP client with per-request delay, local file cache, and retry."""
@@ -124,6 +126,7 @@ class RateLimitedClient:
 # Browser-based client (Cloudflare-protected sources: FBref, Transfermarkt)
 # ---------------------------------------------------------------------------
 
+
 class BrowserClient:
     """Headed Chrome client via nodriver for Cloudflare-protected sources.
 
@@ -217,10 +220,8 @@ class BrowserClient:
 
     def close(self) -> None:
         if self._browser is not None:
-            try:
+            with contextlib.suppress(Exception):
                 self._browser.stop()  # type: ignore[union-attr]
-            except Exception:
-                pass
             self._browser = None
         if self._loop is not None and not self._loop.is_closed():
             self._loop.close()
