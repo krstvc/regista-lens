@@ -9,6 +9,16 @@ seed-paths: ["seeds"]
 test-paths: ["tests"]
 macro-paths: ["macros"]
 
+seeds:
+  regista_lens:
+    player_match_overrides:
+      +column_types:
+        fbref_player_id: varchar
+        understat_player_id: varchar
+        transfermarkt_player_id: varchar
+        canonical_player_id: varchar
+        override_reason: varchar
+
 clean-targets:
   - target
   - dbt_packages
