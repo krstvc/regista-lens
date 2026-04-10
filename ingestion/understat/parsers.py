@@ -148,3 +148,59 @@ def parse_player_season_stats(
         count=len(records),
     )
     return records
+
+
+def parse_player_season_stats_json(
+    json_str: str,
+    league: str,
+    season: str,
+) -> list[UnderstatPlayerSeasonStatsRaw]:
+    """Parse player season stats from a JSON string (extracted via JS evaluation).
+
+    This is the preferred entry point when using a browser client that
+    evaluates ``JSON.stringify(playersData)`` on the page.
+    """
+    if not json_str:
+        logger.error("understat_empty_json", league=league, season=season)
+        return []
+
+    try:
+        raw_data = json.loads(json_str)
+    except json.JSONDecodeError as e:
+        logger.error("understat_json_parse_error", league=league, season=season, error=str(e))
+        return []
+
+    if not isinstance(raw_data, list):
+        logger.error("understat_unexpected_format", league=league, season=season)
+        return []
+
+    records: list[UnderstatPlayerSeasonStatsRaw] = []
+    for player_data in raw_data:
+        fields: dict[str, int | float | str | None] = {}
+        for json_key, schema_field in _FIELD_MAP.items():
+            raw_value = player_data.get(json_key)
+            fields[schema_field] = _coerce_value(
+                str(raw_value) if raw_value is not None else None,
+                schema_field,
+            )
+
+        fields["league"] = league
+        fields["season"] = season
+
+        try:
+            record = UnderstatPlayerSeasonStatsRaw(**fields)
+            records.append(record)
+        except Exception as e:
+            logger.warning(
+                "understat_record_validation_error",
+                player=player_data.get("player_name"),
+                error=str(e),
+            )
+
+    logger.info(
+        "parsed_understat_player_season_stats",
+        league=league,
+        season=season,
+        count=len(records),
+    )
+    return records
