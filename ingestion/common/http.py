@@ -218,6 +218,58 @@ class BrowserClient:
 
         return html
 
+    async def _eval_js(self, url: str, expression: str) -> str:
+        """Load a page and evaluate a JS expression after scripts execute."""
+        browser = await self._ensure_browser()
+        page = await browser.get(url)  # type: ignore[union-attr]
+        deadline = time.monotonic() + self._page_load_timeout
+        while time.monotonic() < deadline:
+            await asyncio.sleep(2)
+            result = await page.evaluate(expression)  # type: ignore[union-attr]
+            if result:
+                return str(result)
+        return ""
+
+    def get_js_variable(
+        self,
+        url: str,
+        expression: str,
+        *,
+        use_cache: bool = True,
+        cache_key: str | None = None,
+    ) -> str:
+        """Load a page via Chrome, wait for scripts to execute, evaluate JS.
+
+        Args:
+            url: The URL to load.
+            expression: JS expression to evaluate (e.g. ``"JSON.stringify(playersData)"``).
+            use_cache: Whether to cache the result locally.
+            cache_key: Override cache key (defaults to url hash).
+
+        Returns:
+            The string result of the JS expression, or empty string on timeout.
+        """
+        key = cache_key or url
+        if use_cache:
+            cached = self._cache_path(key)
+            if cached.exists():
+                logger.debug("cache_hit", url=url, expression=expression)
+                return cached.read_text(encoding="utf-8")
+
+        self._wait_for_rate_limit()
+        logger.info("browser_js_eval", url=url, expression=expression)
+
+        if self._loop is None or self._loop.is_closed():
+            self._loop = asyncio.new_event_loop()
+        result = self._loop.run_until_complete(self._eval_js(url, expression))
+        self._last_request_time = time.monotonic()
+
+        if use_cache and result:
+            self._cache_dir.mkdir(parents=True, exist_ok=True)
+            self._cache_path(key).write_text(result, encoding="utf-8")
+
+        return result
+
     def close(self) -> None:
         if self._browser is not None:
             with contextlib.suppress(Exception):

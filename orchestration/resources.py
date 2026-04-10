@@ -33,13 +33,13 @@ class FbrefClientResource(ConfigurableResource):
 
 
 class UnderstatClientResource(ConfigurableResource):
-    """Dagster resource wrapping the Understat HTTP client with rate limiting."""
+    """Dagster resource wrapping the Understat HTTP client with browser rendering."""
 
     request_delay: float = 2.0
     cache_dir: str = ".cache/understat"
 
     def get_client(self) -> UnderstatClient:
-        http_client = RateLimitedClient(
+        http_client = BrowserClient(
             delay_seconds=self.request_delay,
             cache_dir=Path(self.cache_dir),
         )

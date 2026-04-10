@@ -37,8 +37,31 @@ def write_raw_table(
 
     Returns the number of rows inserted.
     """
+    schema = _derive_schema(table_name)
+    qualified_name = f"{schema}.{table_name}"
+
     if not records:
-        logger.warning("write_raw_table_empty", table=table_name, season=season)
+        logger.warning("write_raw_table_empty", table=qualified_name, season=season)
+        # Ensure the schema exists and clear stale partition data so dbt
+        # sees an empty source rather than stale rows from a previous run.
+        con = duckdb.connect(db_path)
+        try:
+            con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
+            table_exists = (
+                con.execute(
+                    "SELECT COUNT(*) FROM information_schema.tables "
+                    "WHERE table_schema = ? AND table_name = ?",
+                    [schema, table_name],
+                ).fetchone()[0]
+                > 0
+            )
+            if table_exists:
+                con.execute(
+                    f"DELETE FROM {qualified_name} WHERE _season = ?",  # noqa: S608
+                    [season],
+                )
+        finally:
+            con.close()
         return 0
 
     now = datetime.now(tz=UTC).isoformat()
@@ -46,9 +69,6 @@ def write_raw_table(
         record["_ingested_at"] = now
         record["_source_url"] = source_url
         record["_season"] = season
-
-    schema = _derive_schema(table_name)
-    qualified_name = f"{schema}.{table_name}"
 
     con = duckdb.connect(db_path)
     try:

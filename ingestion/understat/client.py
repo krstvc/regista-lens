@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from ingestion.common.http import RateLimitedClient
-from ingestion.understat.parsers import parse_player_season_stats
+from ingestion.common.http import BrowserClient
+from ingestion.understat.parsers import parse_player_season_stats_json
 from ingestion.understat.schemas import UnderstatPlayerSeasonStatsRaw
 
 # Understat URL slugs for the top 5 European leagues
@@ -26,7 +26,7 @@ def _season_to_year(season: str) -> str:
 class UnderstatClient:
     """High-level client for fetching and parsing Understat data."""
 
-    def __init__(self, http_client: RateLimitedClient) -> None:
+    def __init__(self, http_client: BrowserClient) -> None:
         self._http = http_client
 
     def fetch_player_season_stats(
@@ -36,14 +36,22 @@ class UnderstatClient:
     ) -> tuple[list[UnderstatPlayerSeasonStatsRaw], str]:
         """Fetch and parse player season stats for a league-season.
 
+        Understat loads player data via JavaScript. We use a headed browser
+        to execute the page scripts, then extract the ``playersData`` JS
+        variable directly.
+
         Returns:
             Tuple of (parsed records, source URL).
         """
         slug = LEAGUE_SLUGS[league]
         year = _season_to_year(season)
         url = f"https://understat.com/league/{slug}/{year}"
-        html = self._http.get(url)
-        records = parse_player_season_stats(html, league, season)
+        json_str = self._http.get_js_variable(
+            url,
+            "JSON.stringify(playersData)",
+            cache_key=f"understat_players_{slug}_{year}",
+        )
+        records = parse_player_season_stats_json(json_str, league, season)
         return records, url
 
     def close(self) -> None:
