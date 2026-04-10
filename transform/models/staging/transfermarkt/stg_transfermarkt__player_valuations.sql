@@ -40,6 +40,10 @@ cleaned as (
         _source_url
 
     from source
+    qualify row_number() over (
+        partition by player_id, team_id, _season
+        order by _ingested_at desc
+    ) = 1
 )
 
 select * from cleaned

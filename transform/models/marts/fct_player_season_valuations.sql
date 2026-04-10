@@ -45,7 +45,7 @@ resolved as (
         on ts.transfermarkt_player_id = px.transfermarkt_player_id
         and ts.season = px.season
     left join team_xref tx
-        on ts.transfermarkt_team_name = tx.transfermarkt_team_name
+        on ts.team_name = tx.transfermarkt_team_name
         and ts.league = tx.league
 ),
 
